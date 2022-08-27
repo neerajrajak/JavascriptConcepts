@@ -1,0 +1,70 @@
+- A function bundled with its lexical scope is closure
+- Below is simple example of Closure:
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			y();
+		}
+				
+		x();
+		
+		Explanation: Here the output will be 10 since function y gets access to its lexical parent x, and a forms a closure of x to y.
+		
+- When function returned from another function they still return their lexical scope
+		
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			return y;
+		}
+		var z = x();
+		z();
+		
+		Here the output will be 10, even though a vanished at line 120, the return value of y contains the closure of x which it executes
+		at line 121
+		
+- When function returned from another function, closure will refer to reference and not the actual value
+
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			a = 100;
+			return y;
+		}
+		var z = x();
+		z();
+
+		Here the output will be 100 not 7 because y refers to the reference of a from closure of x
+		
+- Closure works with its deep nested parent as well
+
+		function z(){
+			var b = 20;
+			function x(){
+				let a = 10;
+				function y(){
+					console.log(a, b);
+				}
+				y();
+			}
+			x();
+		}
+		z();
+		
+		Here closure of both z and x are available for function y.
+		
+- Uses of Closures:
+	- Module design pattern
+	- function currying
+	- memoize
+	- function like once
+	- maintain state in async world
+	- SetTimeouts
+	- Iterators
+	- and many more
