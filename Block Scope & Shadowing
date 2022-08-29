@@ -1,0 +1,51 @@
+	- Block: Block is a group of statement written where single statement are minimum required. 
+		For Ex: if(condition) statement;
+					In the above if statement, there can be a single statement or a group of statement will be executed
+					Those group a statement are block in this case
+				if(condition){
+					....
+					statements
+				}
+				
+	- Block Scope & Shadowing:
+						var a = 10;
+						{
+							var a = 100;
+							let b = 200;
+							const c = 300;
+							
+							console.log(a); 100
+							console.log(b); 200
+							console.log(c); 300
+						}
+						console.log(a); 100
+						console.log(b); not defined
+						console.log(c); not defined
+						
+					- In the above example, we are getting value of b and c as not defined since we are trying to access it outside its block scope
+					- Value of variable declared with var is changed as it belongs to the global scope
+					- Variable declared using let and const are stored on a special memory area called Block scope.
+					
+						var a = 10;
+						let b = 20;
+						const c = 30;
+						{
+							var a = 100;
+							let b = 200;
+							const c = 300;
+							
+							console.log(a); 100
+							console.log(b); 200
+							console.log(c); 300
+						}
+						console.log(a); 100
+						console.log(b); 20 
+						console.log(c); 30
+						
+					- In the above example value of a is shadowed since it belong to its global scope, but not of b and c.
+					- variables declared with let and const above block scope are stored in special memory area called Script scope, hence it 
+						prints block scope value inside block scope and scropt scope value in script scope.
+						
+					- There are few rules we need to take care of :
+						variable declared in script scope with let and const cannot be changed in block scope using var but vice versa is possible.
+						variable declared with let and const from script scope cannot be changed in block scope.
