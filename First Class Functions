@@ -1,0 +1,85 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+First Class Functions
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+==> Function Statement vs Function Expression
+
+	**Function Statement is a normal function we define like, it is also known as function declaration
+	
+	function a(){
+	  console.log("a called");
+	}
+	
+	**Function expression is a variable holding anonomous function
+	**Anonomous function cannot be called by its own, it has to be assigned to a variable
+	
+	var b = function(){
+	   console.log("b called"); 
+	}
+	
+	In both the cases the output will be driven based on the function call
+	
+	a();
+	b();
+
+	function a(){
+	  console.log("a called");
+	}
+	
+	var b = function(){
+	   console.log("b called"); 
+	}
+	
+	a();
+	b();
+	
+	But if we call the function statement before it is declared we will get the same output, but in case of function expression we will get an error
+	that function is not defined, this is because function a will be allocated a memory before it is called, but since function b is assigned to a 
+	variable and hence if we try to access before it is called it will return an error since memory is not assigned.
+	
+	**Named Function: Named function is a function with name assigned to a variable in function expression
+	
+	var b = function xyz(){
+	   console.log("b called"); 
+	}
+	
+==> Parameter vs Arguments
+
+	var demo = function(param1, param2){
+	   console.log(param1, param2); 
+	}
+
+	let arg1 = 10;
+	let arg2 = 20;
+	demo(arg1, arg2);
+	
+	Parameter forms a part of function definition like above param1, param2 and it is local to the function and has no access to its outer scope.
+	Arguments forms a part of values used to call a function, like arg1, arg2
+	Both the terms are used interchangebly many times but is not same, they are different
+	
+==> First Class Function/ First Class Citizen:
+		The ability of function to be passed as a value, to be passed as an argument and to be returned from a function is called First Class Function
+		
+	- Function passed as a value:	
+	  var b = function(){
+	   console.log("b called"); 
+	  }
+	 
+	- Function passed as an argument
+		
+		function demo(functionAsParam){
+		  console.log(functionAsParam);
+		}
+		
+		demo(function(){
+			console.log("See my definition from demo function argument);
+		});
+		
+	- Function return from another another function
+	
+		function demo(){
+			return function(){
+			  console.log("I am another function returned from Demo");
+			}
+		}
+		
+		demo()();
