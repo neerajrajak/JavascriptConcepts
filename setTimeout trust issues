@@ -1,0 +1,46 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Trust Issues with setTimeOut
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Please go through event loop concept I explained before reading below, working of event loop is important to understand this concept
+
+- usually when you use setTimeOut method it waits for the time interval we mention and once that time interval expires, it is moved to callback queue
+	and once callstack is empty event loop picks the callback method from callback queue and moves into callstack and then it is executed.
+	
+	For Ex: 
+			console.log("start");
+			setTimeOut(function(){
+			  console.log("I am 5 sec delayed");
+			}, 5000);
+			console.log("end");
+			
+	Output - start
+			 end
+			 I am 5 sec delayed
+			 
+- But it doesn't gaurantee that callback function in it will execute exactly after the time we mentioned in the second parameter
+- consider below example:
+
+	console.log("start");
+	
+	setTimeOut(function(){
+	  console.log("Why I took more than 5 sec?");
+	}, 5000);
+	console.log("end");
+	let startTime = new Date().getTime();
+	let endTime = startTime;
+	
+	while(endTime < startTime + 10000){
+		endTime = new Date().getTime();
+	}
+	
+	console.log("I delayed setTimeOut");
+	
+	Output : start
+			 end
+			 I delayed setTimeOut
+			Why I took more than 5 sec?		
+
+	Explanation: If you see above example, the last console statement is executed after 10 sec, but still setTimeOut callback is executed after it.
+				 This is because, even though setTimeOut timer expire in 5 sec, it is waiting in the callback queue for execution and event loop
+				 picks it up only after callstack get empty and den it is executed.
