@@ -1,0 +1,67 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Higher Order Function
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+				 
+- A function that takes another function as an argument or returns another function from it is Higher Order Function.	
+
+	function a(){
+		console.log("I will execute in function b");
+	}
+	
+	function b(a){
+		console("Hi I am function b");
+		a();
+	}
+	
+	Here function b takes function a as a parameter and executes it.
+	function b is a Higher Order Function and function a is its callback function.
+	
+- Consider below example to calculate area of circe and its circumference,
+	
+	What we normally do is like :
+	const radius = [5,3,12,7];
+	const calculateCircle = (allRadius)=>{
+		let area = [];
+		allRadius.forEach((r)=>{
+			area.push(Math.PI * r * r);
+		});
+		return area;
+	}
+	
+	const calculateCircumference = (allRadius)=>{
+		let circum = [];
+		allRadius.forEach((r)=>{
+			circum.push(2 * Math.PI * r);
+		});
+		return circum;
+	}
+	
+	console.log("Area = ", calculateCircle(radius));
+	
+	console.log("Circumference = ", calculateCircumference(radius));
+	
+	If we see above code we have created two different function one to calculate area of circle and another for its circumference.
+	The problem here is we are repeated few lines of code to do the same functionality which is against DRY principle.
+	Also in future if we want to calculate few other logic of calculation we need to write one more function and implement thus voilating 
+		principle of reusability.
+		
+	In order to be our code more modular, open for reusability we can use Higher Order Function
+	
+	const calculateArea = radius => Math.PI * r * r;
+	
+	const calculateCircumference = radius => 2 * Math.PI * r;
+	
+	const calculate = (allRadius, logic)=>{
+		let calculated = [];
+		allRadius.forEach((r)=>{
+			calculated.push(logic(r));
+		});
+		return calculated;
+	}
+	
+	console.log("Area = ", calculate(radius, calculateArea));
+	
+	console.log("Circumference = ", calculate(radius, calculateCircumference));
+	
+	Using Higher Order Function we have segregated logic for calculation as seperate function and the same is passed as a callback to its 
+	Higher Order Function.
