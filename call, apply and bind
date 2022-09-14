@@ -1,0 +1,103 @@
+Call =>
+	- Consider below example
+	
+		const myName = {
+		firstName:"Neeraj",
+		lastName:"Rajak",
+		printFullname: function(){
+			console.log(this.firstName + ' ' +  this.lastName);
+		}
+	   }
+
+	myName.printFullname();
+	
+	Above example will print : Neeraj Rajak
+
+What if we want to utilize same method in another object? This is possible using call.
+
+call can borrow the function defined in another object as below :
+
+		const myName = {
+			firstName:"Neeraj",
+			lastName:"Rajak",
+			printFullname: function(){
+				console.log(this.firstName + ' ' +  this.lastName);
+			}
+		}
+		
+		myName.printFullname();
+		
+		const sportsmanName = {
+			firstName:"Virat",
+			lastName:"Kohli",
+		}
+		
+		myName.printFullname.call(sportsmanName);
+		
+	- using call we have sent the sportsmanName object and the same is refered to as this reference in myName object function.
+	
+	- if function is to be reused with multiple object we can define it as seperate and use it accordingly using call
+	
+	const myName = {
+    firstName:"Neeraj",
+    lastName:"Rajak"
+	}
+	
+	const printFullname= function() {
+		console.log(this.firstName + ' ' +  this.lastName);
+	}
+	;
+	
+	const sportsmanName = {
+		firstName:"Virat",
+		lastName:"Kohli",
+	}
+	
+	printFullname.call(sportsmanName);
+	printFullname.call(myName);
+	
+- apply =>
+
+	In our prev example, suposse if we want to pass multiple parameters which will not be a part of your object but will be used in your function.
+	
+	const myName = {
+      firstName:"Neeraj",
+      lastName:"Rajak"
+	}
+	
+	const printFullname= function(profession, residesIn) {
+		console.log(this.firstName + ' ' +  this.lastName+ ' is a '+ profession+ ' who resides in '+ residesIn);
+	}
+	;
+	
+	const sportsmanName = {
+	  firstName:"Virat",
+	  lastName:"Kohli",
+	}
+	
+	printFullname.call(sportsmanName, 'Cricketer', 'Delhi');
+	printFullname.apply(myName, ['Software Engineer', 'Thane']);
+	
+	Output: 
+	Virat Kohli is a Cricketer who resides in Delhi
+	Neeraj Rajak is a Software Engineer who resides in Thane
+	
+	In both the cases, the first parameter which is passed is an object which will be your this reference and the second parameters will be object
+	If the number of parameters grows its better to be passed it as an array using apply method rather than using call method.
+	
+- bind =>
+
+	bind is similar to apply, the only difference is it is not called directly but its reference is copied to another variable and that method
+	can be called later
+	
+	Example:
+	
+	const printMyName = printFullname.bind(myName, 'Coder', 'Mumbai');
+	console.log(printMyName);
+	printMyName();
+	
+	Output:
+	
+	Neeraj Rajak is a Coder who resides in Mumbai
+	
+	Explanation: Here if you see the printFullname function is passed as a reference to printMyName and the same is called later using bind
