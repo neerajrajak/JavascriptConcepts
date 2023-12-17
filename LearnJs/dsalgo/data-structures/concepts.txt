@@ -1,0 +1,32 @@
+
+=======================================================================================================
+Data Structures
+=======================================================================================================
+
+What is Data Structures?
+- Data Structures are collections of values, relation amongst them and the functions and operations that can be applied 
+on that data.
+
+What is a class?
+- Class is a blueprint for creating objects with predefined methods and properties.
+- classes are created with new keyword.
+- the constructor function is a special function that gets run when a class is instantiated.
+
+"this" keyword?
+- Inside all of our constructor and methods, 'this' refers to the current instance of the class.
+i.e. object created from that class.
+
+
+=======================================================================================================
+Linked List
+=======================================================================================================
+
+What is Linked List?
+- A data structure that contains head, tail and a length property.
+- Linked list consist of nodes, and each node has a pointer to another node or null.
+
+Comparison with Arrays
+    - List => Do not have indexes | Arrays => Indexed in order
+    - Connected via nodes with a next pointer | Insertion and deletion can be expensive
+    - Random access is not allowed | Random access is easy via indexes
+

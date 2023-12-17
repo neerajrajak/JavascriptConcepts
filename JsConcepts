@@ -1,0 +1,769 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+let & const
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	- Consider below example of var
+		
+		console.log(a);
+		var a = 10;
+		console.log(b);
+		
+		In above scenario you will get value of a as undefined, since as per js memory allocation in call stack, a is allocated a memory but value is
+		not assigned.
+		In the next console of b we will get syntax error as not defined, since we are trying to access a value of b which is not even being declared and
+		hence no memory allocated to it.
+		
+	- consider below example of let
+		console.log(a);
+		let a = 20;
+		let b;
+		console.log(b);
+		
+		In the above scenario, we will get reference type error as we are trying to access value of a before it is initialized.
+		This is because, variables declared using let and const is allocated to a special memory and not in the call stack,
+		and till the time it is initialized if we try to access it, it will remain in a temporal dead zone.
+		For the log statement of b, we will be getting its value as undefined.
+		
+	- The only difference between let and const is we can change value of variable declared with a after it is initialized but we cannot change value of
+		const after it is initialized.
+	- Also it is mandatory to declare and initialized variable declared with const at the same time.
+	-let and const are hoisted but its memory is allocated at other place than window which cannot be accessed before initialisation.
+	-Temporal Dead Zone exists until variable is declared and assigned a value.
+	-window.variable OR this.variable will not give value of variable defined using let or const.
+	-We cannot redeclare the same variable with let/const(even with using var the second time).
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Block Scope & Shadowing
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	- Block: Block is a group of statement written where single statement are minimum required. 
+		For Ex: if(condition) statement;
+					In the above if statement, there can be a single statement or a group of statement will be executed
+					Those group a statement are block in this case
+				if(condition){
+					....
+					statements
+				}
+				
+	- Block Scope & Shadowing:
+						var a = 10;
+						{
+							var a = 100;
+							let b = 200;
+							const c = 300;
+							
+							console.log(a); 100
+							console.log(b); 200
+							console.log(c); 300
+						}
+						console.log(a); 100
+						console.log(b); not defined
+						console.log(c); not defined
+						
+					- In the above example, we are getting value of b and c as not defined since we are trying to access it outside its block scope
+					- Value of variable declared with var is changed as it belongs to the global scope
+					- Variable declared using let and const are stored on a special memory area called Block scope.
+					
+						var a = 10;
+						let b = 20;
+						const c = 30;
+						{
+							var a = 100;
+							let b = 200;
+							const c = 300;
+							
+							console.log(a); 100
+							console.log(b); 200
+							console.log(c); 300
+						}
+						console.log(a); 100
+						console.log(b); 20 
+						console.log(c); 30
+						
+					- In the above example value of a is shadowed since it belong to its global scope, but not of b and c.
+					- variables declared with let and const above block scope are stored in special memory area called Script scope, hence it 
+						prints block scope value inside block scope and scropt scope value in script scope.
+						
+					- There are few rules we need to take care of :
+						variable declared in script scope with let and const cannot be changed in block scope using var but vice versa is possible.
+						variable declared with let and const from script scope cannot be changed in block scope.
+						
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Closure
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+- A function bundled with its lexical scope is closure
+- Below is simple example of Closure:
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			y();
+		}
+				
+		x();
+		
+		Explanation: Here the output will be 10 since function y gets access to its lexical parent x, and a forms a closure of x to y.
+		
+- When function returned from another function they still return their lexical scope
+		
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			return y;
+		}
+		var z = x();
+		z();
+		
+		Here the output will be 10, even though a vanished at line 120, the return value of y contains the closure of x which it executes
+		at line 121
+		
+- When function returned from another function, closure will refer to reference and not the actual value
+
+		function x(){
+			let a = 10;
+			function y(){
+				console.log(a);
+			}
+			a = 100;
+			return y;
+		}
+		var z = x();
+		z();
+
+		Here the output will be 100 not 7 because y refers to the reference of a from closure of x
+		
+- Closure works with its deep nested parent as well
+
+		function z(){
+			var b = 20;
+			function x(){
+				let a = 10;
+				function y(){
+					console.log(a, b);
+				}
+				y();
+			}
+			x();
+		}
+		z();
+		
+		Here closure of both z and x are available for function y.
+		
+- Uses of Closures:
+	- Module design pattern
+	- function currying
+	- memoize
+	- function like once
+	- maintain state in async world
+	- SetTimeouts
+	- Iterators
+	- and many more
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+SetTimeout and Closures
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+- Lets consider below simple example
+
+	function x(){
+	  var i = 1;
+	  setTimeOut(function(){
+		console.log(i);
+	  }, 3000);
+	  console.log("Why I printed before?");
+	}
+	
+	Explanation :
+		- Here the output will be:
+			Why I printed before?
+			1 
+		-as per closure of x is passed to the function passed a paramater to setTimeOut function and that function holds the closure of x
+		
+- Consider Below Example of setTimeOut in for loop
+
+	function x(){
+	  for(var i = 1; i<=5; i++){
+	     setTimeOut(function(){
+		  console.log(i);
+	    }, i*1000);
+	  } 
+	}
+	
+	x();
+		
+	Here output will be 6 printed 5 times after every conditional seconds we added
+	
+	**Explanation:
+		- As we know closure refers to the reference and not the value, in the above example value of i is incremented and 
+		  loop is completed first then setTimeOut function and till the time setTimeOut starts printing its value the reference 
+		  to the closure gets the incremented value of i.
+
+	**To solve this problem replace var declaration of i with let
+		- Since we all know let belongs to block scope, on every incremented value of i a block scope of i is created since let treats it as
+		  a new variable and forms the closure to the function passed in setTimeOut function.
+		  
+	**What if interviewer ask to solve this problem using var itself
+
+	function x(){
+	  for(var i = 1; i<=5; i++){
+	     function close(x){
+		   setTimeOut(function(){
+			 console.log(x);
+	       }, x*1000);
+		 }
+		 close(i);
+	  } 
+	}
+	
+	x();
+	
+	Explanation: 
+		- The above problem we have solved using closure itself
+		- On every increment we are passing a value of variable declared with var i as a function parameter of close function
+		  So on every function call of close(i), i becomes the closure of for loop to function close() and hence it fetch 
+		  the incremented closure of i everytime.
+		  
+		  
+Most asked in Interview: https://www.youtube.com/watch?v=t1nFAMws5FI&list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP&index=14
+
+Disadvantages of Closure:
+- Overconsumptions of memory since those variables are not garbage collected
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+First Class Functions
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+==> Function Statement vs Function Expression
+
+	**Function Statement is a normal function we define like, it is also known as function declaration
+	
+	function a(){
+	  console.log("a called");
+	}
+	
+	**Function expression is a variable holding anonomous function
+	**Anonomous function cannot be called by its own, it has to be assigned to a variable
+	
+	var b = function(){
+	   console.log("b called"); 
+	}
+	
+	In both the cases the output will be driven based on the function call
+	
+	a();
+	b();
+
+	function a(){
+	  console.log("a called");
+	}
+	
+	var b = function(){
+	   console.log("b called"); 
+	}
+	
+	a();
+	b();
+	
+	But if we call the function statement before it is declared we will get the same output, but in case of function expression we will get an error
+	that function is not defined, this is because function a will be allocated a memory before it is called, but since function b is assigned to a 
+	variable and hence if we try to access before it is called it will return an error since memory is not assigned.
+	
+	**Named Function: Named function is a function with name assigned to a variable in function expression
+	
+	var b = function xyz(){
+	   console.log("b called"); 
+	}
+	
+==> Parameter vs Arguments
+
+	var demo = function(param1, param2){
+	   console.log(param1, param2); 
+	}
+
+	let arg1 = 10;
+	let arg2 = 20;
+	demo(arg1, arg2);
+	
+	Parameter forms a part of function definition like above param1, param2 and it is local to the function and has no access to its outer scope.
+	Arguments forms a part of values used to call a function, like arg1, arg2
+	Both the terms are used interchangebly many times but is not same, they are different
+	
+==> First Class Function/ First Class Citizen:
+		The ability of function to be passed as a value, to be passed as an argument and to be returned from a function is called First Class Function
+		
+	- Function passed as a value:	
+	  var b = function(){
+	   console.log("b called"); 
+	  }
+	 
+	- Function passed as an argument
+		
+		function demo(functionAsParam){
+		  console.log(functionAsParam);
+		}
+		
+		demo(function(){
+			console.log("See my definition from demo function argument);
+		});
+		
+	- Function return from another another function
+	
+		function demo(){
+			return function(){
+			  console.log("I am another function returned from Demo");
+			}
+		}
+		
+		demo()(); 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Callback Function and Event Listeners
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+- What is callback function in javascript?
+	- Javascript is a single threaded language and execution occurs one after the other
+	- this single thread is managed in call stack
+	- Callback basically helps us to write asynchronous code by passing function as an argument.
+	- Consider below example:
+		
+		setTimeOut(function(){
+		  console.log("Timer");
+		}, 5000);
+		
+		function x(passedFun){
+		  console.log("x called");
+		  passedFun();
+		}
+		
+		x(function(){
+		  console.log("y called");	
+		});
+		
+	- In the example first x called will be printed then y called and finally Timer
+	- Since javascript executes one line sequential we are achieving this asynchronous behaviour using callback function which is passed in 
+		setTimeOut
+		
+	- Consider a below callback scenario in click event of an html element, which will print incremented value on every click
+	
+	let val = 0;
+	document.getElementById("myClick")
+	.addEvenListener("click", function xyz(){
+	  console.log("Print: ", ++val);
+	});
+		
+	Here function xyz is the callback attached to the click event of html element having Id myClick.
+	
+	**Having a global value is not recommended, we can use closure here, where in addEvenListener will form a closure to function xyz
+	
+	function attachListener(){
+	  let val = 0; 
+	   document.getElementById("myClick")
+	   .addEvenListener("click", function xyz(){
+	     console.log("Print: ", ++val);
+	    });
+	}
+	
+	attachListener();
+	
+	Here attachListener forms a closure and remembers the previous value of a val and the moment click event is triggered for myClick, function xyz
+	gets the updated value from closure and prints it
+	
+	** The event listeners which are registered in our program is heavy since it consume lot of memory and it is important to free this event listeners
+	so that it should be garbage collected once its purpose is done.
+	
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Trust Issues with setTimeOut
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Please go through event loop concept I explained before reading below, working of event loop is important to understand this concept
+
+- usually when you use setTimeOut method it waits for the time interval we mention and once that time interval expires, it is moved to callback queue
+	and once callstack is empty event loop picks the callback method from callback queue and moves into callstack and then it is executed.
+	
+	For Ex: 
+			console.log("start");
+			setTimeOut(function(){
+			  console.log("I am 5 sec delayed");
+			}, 5000);
+			console.log("end");
+			
+	Output - start
+			 end
+			 I am 5 sec delayed
+			 
+- But it doesn't gaurantee that callback function in it will execute exactly after the time we mentioned in the second parameter
+- consider below example:
+
+	console.log("start");
+	
+	setTimeOut(function(){
+	  console.log("Why I took more than 5 sec?");
+	}, 5000);
+	console.log("end");
+	let startTime = new Date().getTime();
+	let endTime = startTime;
+	
+	while(endTime < startTime + 10000){
+		endTime = new Date().getTime();
+	}
+	
+	console.log("I delayed setTimeOut");
+	
+	Output : start
+			 end
+			 I delayed setTimeOut
+			Why I took more than 5 sec?		
+
+	Explanation: If you see above example, the last console statement is executed after 10 sec, but still setTimeOut callback is executed after it.
+				 This is because, even though setTimeOut timer expire in 5 sec, it is waiting in the callback queue for execution and event loop
+				 picks it up only after callstack get empty and den it is executed.
+				 
+				 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Higher Order Function
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+				 
+- A function that takes another function as an argument or returns another function from it is Higher Order Function.	
+
+	function a(){
+		console.log("I will execute in function b");
+	}
+	
+	function b(a){
+		console("Hi I am function b");
+		a();
+	}
+	
+	Here function b takes function a as a parameter and executes it.
+	function b is a Higher Order Function and function a is its callback function.
+	
+- Consider below example to calculate area of circe and its circumference,
+	
+	What we normally do is like :
+	const radius = [5,3,12,7];
+	const calculateCircle = (allRadius)=>{
+		let area = [];
+		allRadius.forEach((r)=>{
+			area.push(Math.PI * r * r);
+		});
+		return area;
+	}
+	
+	const calculateCircumference = (allRadius)=>{
+		let circum = [];
+		allRadius.forEach((r)=>{
+			circum.push(2 * Math.PI * r);
+		});
+		return circum;
+	}
+	
+	console.log("Area = ", calculateCircle(radius));
+	
+	console.log("Circumference = ", calculateCircumference(radius));
+	
+	If we see above code we have created two different function one to calculate area of circle and another for its circumference.
+	The problem here is we are repeated few lines of code to do the same functionality which is against DRY principle.
+	Also in future if we want to calculate few other logic of calculation we need to write one more function and implement thus voilating 
+		principle of reusability.
+		
+	In order to be our code more modular, open for reusability we can use Higher Order Function
+	
+	const calculateArea = radius => Math.PI * r * r;
+	
+	const calculateCircumference = radius => 2 * Math.PI * r;
+	
+	const calculate = (allRadius, logic)=>{
+		let calculated = [];
+		allRadius.forEach((r)=>{
+			calculated.push(logic(r));
+		});
+		return calculated;
+	}
+	
+	console.log("Area = ", calculate(radius, calculateArea));
+	
+	console.log("Circumference = ", calculate(radius, calculateCircumference));
+	
+	Using Higher Order Function we have segregated logic for calculation as seperate function and the same is passed as a callback to its 
+	Higher Order Function.
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+call, apply and bind
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+Call =>
+	- Consider below example
+	
+		const myName = {
+		firstName:"Neeraj",
+		lastName:"Rajak",
+		printFullname: function(){
+			console.log(this.firstName + ' ' +  this.lastName);
+		}
+	   }
+
+	myName.printFullname();
+	
+	Above example will print : Neeraj Rajak
+
+What if we want to utilize same method in another object? This is possible using call.
+
+call can borrow the function defined in another object as below :
+
+		const myName = {
+			firstName:"Neeraj",
+			lastName:"Rajak",
+			printFullname: function(){
+				console.log(this.firstName + ' ' +  this.lastName);
+			}
+		}
+		
+		myName.printFullname();
+		
+		const sportsmanName = {
+			firstName:"Virat",
+			lastName:"Kohli",
+		}
+		
+		myName.printFullname.call(sportsmanName);
+		
+	- using call we have sent the sportsmanName object and the same is refered to as this reference in myName object function.
+	
+	- if function is to be reused with multiple object we can define it as seperate and use it accordingly using call
+	
+	const myName = {
+    firstName:"Neeraj",
+    lastName:"Rajak"
+	}
+	
+	const printFullname= function() {
+		console.log(this.firstName + ' ' +  this.lastName);
+	}
+	;
+	
+	const sportsmanName = {
+		firstName:"Virat",
+		lastName:"Kohli",
+	}
+	
+	printFullname.call(sportsmanName);
+	printFullname.call(myName);
+	
+- apply =>
+
+	In our prev example, suposse if we want to pass multiple parameters which will not be a part of your object but will be used in your function.
+	
+	const myName = {
+      firstName:"Neeraj",
+      lastName:"Rajak"
+	}
+	
+	const printFullname= function(profession, residesIn) {
+		console.log(this.firstName + ' ' +  this.lastName+ ' is a '+ profession+ ' who resides in '+ residesIn);
+	}
+	;
+	
+	const sportsmanName = {
+	  firstName:"Virat",
+	  lastName:"Kohli",
+	}
+	
+	printFullname.call(sportsmanName, 'Cricketer', 'Delhi');
+	printFullname.apply(myName, ['Software Engineer', 'Thane']);
+	
+	Output: 
+	Virat Kohli is a Cricketer who resides in Delhi
+	Neeraj Rajak is a Software Engineer who resides in Thane
+	
+	In both the cases, the first parameter which is passed is an object which will be your this reference and the second parameters will be object
+	If the number of parameters grows its better to be passed it as an array using apply method rather than using call method.
+	
+- bind =>
+
+	bind is similar to apply, the only difference is it is not called directly but its reference is copied to another variable and that method
+	can be called later
+	
+	Example:
+	
+	const printMyName = printFullname.bind(myName, 'Coder', 'Mumbai');
+	console.log(printMyName);
+	printMyName();
+	
+	Output:
+	
+	Neeraj Rajak is a Coder who resides in Mumbai
+	
+	Explanation: Here if you see the printFullname function is passed as a reference to printMyName and the same is called later using bind
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Polyfill for bind
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+** Please refer call, apply bind before starting with this concepts
+
+- consider below example:
+
+	const myName = {
+	  firstName:"Neeraj",
+	  lastName:"Rajak"
+	}
+	
+	const printName= function() {
+	  console.log(this.firstName + ' ' +  this.lastName);
+	}
+	
+	let printMyName = printName.bind(myName);
+	printMyName();
+	
+	Output: 
+	Neeraj Rajak
+	
+- This was the most simple implementation of how we use bind method.
+- But bind method is the one provided by js itself
+- What if we want to write our own implementation of bind method such that it should work exactly same as bind method
+- like below
+	
+	let printMyName = printName.myBind(myName);
+	printMyName();
+	
+	here myBind should be a custom method defined by you and it should work exactly like bind =>
+	
+	Function.prototype.myBind = function(...args){
+    let obj = this;
+    return function(){
+        obj.call(args[0]);
+		}
+	};
+	
+	let printCustomBindName = printName.myBind(myName);
+	printCustomBindName();
+	
+	Explanation: Here since we are not passing any extra parameter other than object it will work, but what if we pass any parameter to myBind method like
+	we passed it in our previous example
+
+	const printName= function(prof, dest) {
+    console.log(this.firstName + ' ' +  this.lastName +', '+prof+ ', '+dest);
+	}
+	let printCustomBindName = printName.myBind(myName, 'IT Analyst', 'BKC');
+	printCustomBindName();
+	
+	- Here it will work using bind but our own implementation will fail since we have considered only this reference such that we have passed first argument
+		only to call while returning our function.
+	
+- Solution: 
+
+	const printName= function(prof, dest) {
+    console.log(this.firstName + ' ' +  this.lastName +', '+prof+ ', '+dest);
+	}
+	
+	let printMyName = printName.bind(myName, 'IT Analyst', 'using bind');
+	printMyName();
+	
+	Function.prototype.myBind = function(...args){
+		let obj = this;
+		let params = args.splice(1);
+		return function(){
+			obj.apply(args[0], params);
+		}
+	};
+	
+	let printCustomBindName = printName.myBind(myName, 'Consultant', 'using myBind');
+	printCustomBindName();
+	
+	Output: 
+	Neeraj Rajak, IT Analyst, using bind
+    Neeraj Rajak, Consultant, using myBind
+	
+	Explanation: Here we are fetching the arguments and as we know the first argument will be pointing to the object then the other arguments we have
+	stored it in params and used in accordingly.
+	Also, we have replaced call with apply since we are getting array of arguments
+	
+- consider another scenario where we pass an argument from function accessing bind and storing method reference to it
+	
+	const printName= function(prof, dest, fromFun) {
+      console.log(this.firstName + ' ' +  this.lastName +', '+prof+ ', '+dest+ ' ,'+fromFun);
+	}
+	
+	let printMyName = printName.bind(myName, 'IT Analyst', 'using bind');
+	printMyName('bind using Name');
+	
+	Output: 
+	Neeraj Rajak, IT Analyst, using bind ,bind using Name
+	
+	Solution:
+	
+	Function.prototype.myBind = function(...args){
+    let obj = this;
+    let params = args.splice(1);
+    return function(...functionArgs){
+        obj.apply(args[0], [...params, ...functionArgs]);
+	  }
+	};
+	
+	let printCustomBindName = printName.myBind(myName, 'Consultant');
+	printCustomBindName('using myBind', 'myBind using custom');
+	
+	Output: 
+	Neeraj Rajak, Consultant, using myBind ,myBind using custom
+	
+	Explanation: 
+		Since the other parameters can also be more than one so we have added a functionArgs in the function we are returning from myBind method.
+		Than using spread operator we have concat both the arrays into single
+		
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Function Currying
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+If we go by definition -
+Currying simply means evaluating functions with multiple arguments and decomposing them into a sequence of functions with a single argument.
+
+In other terms, currying is when a function — instead of taking all arguments at one time — takes the first one and returns a new function, 
+which takes the second one and returns a new function, which takes the third one, etc. until all arguments are completed.
+
+Consider below example of Function currying using bind method
+
+	let multiple = function(x, y){
+		console.log(x * y); 
+	}
+	
+	multiple(2, 3);
+	
+- In the above excample we have shown a normal function call by passing all arguments at once.
+- What if we want to create own implementation like x value will be determined by us and y value will remain same
+
+	const bindCurrying = multiple.bind(this, 5); 
+	bindCurrying(3);
+	bindCurrying(11);
+	
+- Here using function currying we have specified that bindCurrying will have a constant x value and y value can change accordingly
+
+=> Function currying using closure
+
+	let area = function(length){
+    return function(breadth){
+        return function(height){
+            console.log(length * breadth * height);
+        }
+      }
+	}
+
+	area(12)(8)(10);
+	
+	- suppose we have fixed length so what we can do is we can curry that function and use it accordingly
+	
+	let constantLength = area(12);
+	constantLength(15)(6);
+
+- It is a complicated topic and can be excelled by going through more and more examples
+	
+
+
+	

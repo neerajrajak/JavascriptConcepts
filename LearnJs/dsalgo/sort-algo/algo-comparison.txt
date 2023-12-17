@@ -1,0 +1,8 @@
+
+-------------------------------------------------
+Bubble Sort  vs Selection Sort vs Insertion Sort
+-------------------------------------------------
+
+Scenario: If we have fairly sorted data :
+    - Bubble Sort or Insertion Sort is the better choice
+    - Selection will traverse again and again selecting the minimum element and find the lowest from current selected     

@@ -1,0 +1,36 @@
+
+=> let and const in javascript
+	
+	- Consider below example of var
+		
+		console.log(a);
+		var a = 10;
+		console.log(b);
+		
+		In above scenario you will get value of a as undefined, since as per js memory allocation in call stack, a is allocated a memory but value is
+		not assigned.
+		In the next console of b we will get syntax error as not defined, since we are trying to access a value of b which is not even being declared and
+		hence no memory allocated to it.
+		
+	- consider below example of let
+		console.log(a);
+		let a = 20;
+		let b;
+		console.log(b);
+		
+		In the above scenario, we will get reference type error as we are trying to access value of a before it is initialized.
+		This is because, variables declared using let and const is allocated to a special memory and not in the call stack,
+		and till the time it is initialized if we try to access it, it will remain in a temporal dead zone.
+		For the log statement of b, we will be getting its value as undefined.
+		
+	- The only difference between let and const is we can change value of variable declared with a after it is initialized but we cannot change value of
+		const after it is initialized.
+	- Also it is mandatory to declare and initialized variable declared with const at the same time.
+	-let and const are hoisted but its memory is allocated at other place than window which cannot be accessed before initialisation.
+	-Temporal Dead Zone exists until variable is declared and assigned a value.
+	-window.variable OR this.variable will not give value of variable defined using let or const.
+	-We cannot redeclare the same variable with let/const(even with using var the second time).
+	
+	
+
+		
